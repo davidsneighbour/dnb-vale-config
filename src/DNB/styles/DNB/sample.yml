@@ -1,5 +1,0 @@
-# see https://vale.sh/docs/checks/capitalization
-extends: capitalization
-message: "'%s' should follow capitalization rules."
-level: warning
-scope: heading
