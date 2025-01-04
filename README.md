@@ -18,7 +18,7 @@ The DNB Vale Configuration package is hosted as an externally downloadable `.zip
 StylesPath = .github/styles
 MinAlertLevel = suggestion
 
-Packages = https://github.com/davidsneighbour/dnb-vale-config/releases/download/v0.0.1/config.zip
+Packages = https://github.com/davidsneighbour/dnb-vale-config/releases/download/v0.0.0/config.zip
 
 [README.md]
 BasedOnStyles = Vale
@@ -37,7 +37,7 @@ For example, consider the following configuration:
 
 ```ini
 Packages = Microsoft,
-https://github.com/davidsneighbour/dnb-vale-config/releases/download/v0.0.1/config.zip
+https://github.com/davidsneighbour/dnb-vale-config/releases/download/v0.0.0/config.zip
 ```
 
 In this setup:

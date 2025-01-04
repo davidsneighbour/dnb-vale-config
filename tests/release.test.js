@@ -3,12 +3,11 @@ import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
 
-// Paths
 const DIST_DIR = path.resolve('dist');
 const SRC_DIR = path.resolve('src');
 const README_PATH = path.resolve('README.md');
 const VALE_INI_PATH = path.join(SRC_DIR, '.vale.ini');
-const RELEASE_SCRIPT = path.resolve('release.js'); // Script path
+const RELEASE_SCRIPT = path.resolve('release.js');
 const PACKAGE_JSON_PATH = path.resolve('package.json');
 const testVersion = '1.2.3-test';
 const versionedZip = path.join(DIST_DIR, `dnb-vale-config-v${testVersion}.zip`);
