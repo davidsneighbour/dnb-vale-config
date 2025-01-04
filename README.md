@@ -15,13 +15,9 @@ The DNB Vale Configuration package is hosted as an externally downloadable `.zip
 ### Example Configuration
 
 ```ini
-StylesPath = .github/styles
 MinAlertLevel = suggestion
 
 Packages = https://github.com/davidsneighbour/dnb-vale-config/releases/download/v0.0.3/config.zip
-
-[README.md]
-BasedOnStyles = Vale
 ```
 
 ### Steps to Use
