@@ -18,7 +18,7 @@ The DNB Vale Configuration package is hosted as an externally downloadable `.zip
 StylesPath = .github/styles
 MinAlertLevel = suggestion
 
-Packages = https://github.com/davidsneighbour/dnb-vale-config/releases/download/v0.0.15/config.zip
+Packages = https://github.com/davidsneighbour/dnb-vale-config/releases/download/v0.0.1/config.zip
 
 [README.md]
 BasedOnStyles = Vale
@@ -28,6 +28,58 @@ BasedOnStyles = Vale
 
 1. Add the latest release URL of the DNB Vale Configuration to your `.vale.ini` under the `Packages` key.
 2. Run Vale as usual. It will automatically download and use the package during linting.
+
+### Understanding Vale Configuration Merging
+
+Vale merges configurations **from right to left** when multiple packages are specified in the `Packages` key. This means that packages listed **later in the sequence override and merge** their settings into those listed earlier.
+
+For example, consider the following configuration:
+
+```ini
+Packages = Microsoft,
+https://github.com/davidsneighbour/dnb-vale-config/releases/download/v0.0.1/config.zip
+```
+
+In this setup:
+
+1. **`Microsoft`**: Provides a base set of configurations and rules.
+2. **`dnb-vale-config`**: Our custom package, listed last, **overrides settings** from `Microsoft`.
+
+#### How Merging Works
+
+- **Override, Not Replace**: If multiple packages define the same setting, the one listed last (furthest to the right) takes precedence.
+- **Merged Configuration**: Settings and rules that do not conflict are combined from all specified packages.
+
+#### Example Scenario
+
+Suppose the `Microsoft` package defines:
+
+```ini
+[*.md]
+BasedOnStyles = Microsoft
+```
+
+Our `dnb-vale-config` package adds:
+
+```ini
+[*.md]
+BasedOnStyles = DNB
+```
+
+The resulting configuration for Markdown files (`*.md`) after merging:
+
+```ini
+[*.md]
+BasedOnStyles = DNB
+```
+
+Here, `BasedOnStyles = DNB` from `dnb-vale-config` overrides the earlier settings. However, any rules or configurations not defined in `dnb-vale-config` will still come from `Microsoft`.
+
+#### Why This Matters
+
+By placing your custom package last in the `Packages` key, you ensure that your rules and configurations take precedence while still benefiting from the base configurations of other packages.
+
+This approach provides flexibility and control, allowing you to **build upon existing packages** without completely replacing them.
 
 ## Release Process
 

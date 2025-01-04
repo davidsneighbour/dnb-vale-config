@@ -23,74 +23,29 @@ function getPackageJson() {
 }
 
 /**
- * Updates the version in package.json, src/.vale.ini, and README.md.
- * @param {string} bumpType Version bump type or test version (e.g., "patch" or "1.2.3-test").
+ * Updates the version in README.md and src/.vale.ini to ensure consistency.
+ * @param {string} newVersion - The new version string to replace in the files.
  */
-async function bumpVersion(bumpType) {
-  console.log(`Bumping version with: ${bumpType}`);
+function updateVersionInFiles(newVersion) {
+  const readmeContent = fs.readFileSync(README_PATH, 'utf-8');
+  const updatedReadmeContent = readmeContent.replace(
+    /https:\/\/github\.com\/davidsneighbour\/dnb-vale-config\/releases\/download\/v\d+\.\d+\.\d+\/config\.zip/g,
+    `https://github.com/davidsneighbour/dnb-vale-config/releases/download/v${newVersion}/config.zip`
+  );
+  fs.writeFileSync(README_PATH, updatedReadmeContent);
+  console.log(`Updated version in README.md to v${newVersion}`);
 
-  const packagePath = path.resolve('package.json');
-  const packageJson = getPackageJson();
-  let newVersion;
-
-  if (bumpType.includes('-test')) {
-    // Use the test version directly
-    newVersion = bumpType;
-  } else {
-    // Parse and bump version normally
-    const [major, minor, patch] = packageJson.version.split('.').map(Number);
-
-    switch (bumpType) {
-      case 'major':
-        newVersion = `${major + 1}.0.0`;
-        break;
-      case 'minor':
-        newVersion = `${major}.${minor + 1}.0`;
-        break;
-      case 'patch':
-      default:
-        newVersion = `${major}.${minor}.${patch + 1}`;
-        break;
-    }
-  }
-
-  // Update package.json
-  packageJson.version = newVersion;
-  fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2));
-  console.log(`Updated package.json version to ${newVersion}`);
-
-  // Update src/.vale.ini
   if (fs.existsSync(VALE_INI_PATH)) {
     const iniContent = fs.readFileSync(VALE_INI_PATH, 'utf-8');
     const updatedIniContent = iniContent.replace(
-      /#\s*Version:\s*\d+\.\d+\.\d+(-test)?/,
+      /#\s*Version:\s*\d+\.\d+\.\d+/,
       `# Version: ${newVersion}`
     );
     fs.writeFileSync(VALE_INI_PATH, updatedIniContent);
-    console.log(`Updated version in ${VALE_INI_PATH}`);
+    console.log(`Updated version in .vale.ini to v${newVersion}`);
   } else {
     console.error(`File not found: ${VALE_INI_PATH}`);
   }
-
-  // Update README.md to point to config.zip with the correct version
-  const newLink = `https://github.com/davidsneighbour/dnb-vale-config/releases/download/v${newVersion}/config.zip`;
-
-  if (fs.existsSync(README_PATH)) {
-    const readmeContent = fs.readFileSync(README_PATH, 'utf-8');
-    const updatedReadmeContent = readmeContent.replace(
-      /https:\/\/github\.com\/davidsneighbour\/dnb-vale-config\/releases\/download\/v\d+\.\d+\.\d+(-test)?\/config\.zip/,
-      newLink
-    );
-    fs.writeFileSync(README_PATH, updatedReadmeContent);
-    console.log(`Updated README.md with the new download link: ${newLink}`);
-  } else {
-    console.error(`File not found: ${README_PATH}`);
-  }
-
-  // Set the dynamic output zip file name
-  OUTPUT_ZIP = path.join(DIST_DIR, `dnb-vale-config-v${newVersion}.zip`);
-
-  return newVersion;
 }
 
 /**
@@ -150,25 +105,38 @@ async function createGitTagAndRelease(version) {
 (async () => {
   try {
     const bumpTypeArg = process.argv[2];
-    let bumpType;
-    if (bumpTypeArg && bumpTypeArg.includes('-test')) {
-      bumpType = bumpTypeArg; // Use the mock test version directly
-    } else {
-      const allowedBumps = ['patch', 'minor', 'major'];
-      bumpType = allowedBumps.includes(bumpTypeArg) ? bumpTypeArg : 'patch'; // Default to patch
-    }
+    const allowedBumps = ['patch', 'minor', 'major'];
+    const bumpType = allowedBumps.includes(bumpTypeArg) ? bumpTypeArg : 'patch';
 
     await ensureCleanGitState();
-    const newVersion = await bumpVersion(bumpType);
+    const packagePath = path.resolve('package.json');
+    const packageJson = getPackageJson();
+    const [major, minor, patch] = packageJson.version.split('.').map(Number);
+    let newVersion;
 
-    // Create both zip files
+    switch (bumpType) {
+      case 'major':
+        newVersion = `${major + 1}.0.0`;
+        break;
+      case 'minor':
+        newVersion = `${major}.${minor + 1}.0`;
+        break;
+      case 'patch':
+      default:
+        newVersion = `${major}.${minor}.${patch + 1}`;
+        break;
+    }
+
+    // Update version in files
+    updateVersionInFiles(newVersion);
+
+    // Create zip files
+    OUTPUT_ZIP = path.join(DIST_DIR, `dnb-vale-config-v${newVersion}.zip`);
     await createZip(OUTPUT_ZIP, `versioned (${newVersion})`);
     await createZip(SECOND_ZIP, 'config');
 
-    // Create the Git tag and release both files
-    if (!bumpType.includes('-test')) {
-      await createGitTagAndRelease(newVersion);
-    }
+    // Create Git tag and release
+    await createGitTagAndRelease(newVersion);
   } catch (error) {
     console.error('An error occurred:', error.message);
     process.exit(1);

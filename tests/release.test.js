@@ -3,12 +3,11 @@ import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
 
-// Paths
 const DIST_DIR = path.resolve('dist');
 const SRC_DIR = path.resolve('src');
 const README_PATH = path.resolve('README.md');
 const VALE_INI_PATH = path.join(SRC_DIR, '.vale.ini');
-const RELEASE_SCRIPT = path.resolve('release.js'); // Script path
+const RELEASE_SCRIPT = path.resolve('release.js');
 const PACKAGE_JSON_PATH = path.resolve('package.json');
 const testVersion = '1.2.3-test';
 const versionedZip = path.join(DIST_DIR, `dnb-vale-config-v${testVersion}.zip`);
@@ -33,7 +32,6 @@ function hasUncommittedChanges() {
 
 describe('Release Process Tests', () => {
   beforeAll(() => {
-    console.log(`Checking for uncommitted changes...`);
     if (hasUncommittedChanges()) {
       throw new Error('Repository has uncommitted changes. Commit or stash them before running tests.');
     }
@@ -46,18 +44,16 @@ describe('Release Process Tests', () => {
     cleanup();
   });
 
-  it('README.md contains the correct version', () => {
-    expect(fs.existsSync(README_PATH)).toBe(true);
+  it('README.md contains the correct version in the download URL', () => {
     const readmeContent = fs.readFileSync(README_PATH, 'utf-8');
     const expectedUrl = `https://github.com/davidsneighbour/dnb-vale-config/releases/download/v${testVersion}/config.zip`;
     expect(readmeContent).toContain(expectedUrl);
   });
 
   it('.vale.ini contains the correct version', () => {
-    expect(fs.existsSync(VALE_INI_PATH)).toBe(true);
     const iniContent = fs.readFileSync(VALE_INI_PATH, 'utf-8');
-    const expectedVersion = `# Version: ${testVersion}`;
-    expect(iniContent).toContain(expectedVersion);
+    const expectedVersionLine = `# Version: ${testVersion}`;
+    expect(iniContent).toContain(expectedVersionLine);
   });
 
   it('Generated zip files exist', () => {
