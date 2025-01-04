@@ -1,4 +1,4 @@
-# Example custom style configuration for Vale
+# see https://vale.sh/docs/checks/capitalization
 extends: capitalization
 message: "'%s' should follow capitalization rules."
 level: warning
