@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { exec } from 'child_process';
+import { exec, execSync } from 'child_process';
 import { promisify } from 'util';
 import archiver from 'archiver';
 
@@ -12,6 +12,28 @@ let OUTPUT_ZIP = ''; // Will be set dynamically based on the version
 const SECOND_ZIP = path.join(DIST_DIR, 'config.zip'); // Static name for the second zip
 const README_PATH = path.resolve('README.md');
 const VALE_INI_PATH = path.join(SRC_DIR, '.vale.ini');
+
+/**
+ * Opens a browser window for the release edit page.
+ * @param {string} tagName The tag name of the release.
+ */
+async function openReleaseEditPage(tagName) {
+  const releaseEditUrl = `https://github.com/davidsneighbour/dnb-vale-config/releases/edit/${tagName}`;
+  console.log(`Opening browser to edit the release: ${releaseEditUrl}`);
+  const platform = process.platform;
+
+  try {
+    if (platform === 'win32') {
+      execSync(`start ${releaseEditUrl}`);
+    } else if (platform === 'darwin') {
+      execSync(`open ${releaseEditUrl}`);
+    } else {
+      execSync(`xdg-open ${releaseEditUrl}`);
+    }
+  } catch (error) {
+    console.error('Failed to open browser for release edit page:', error.message);
+  }
+}
 
 /**
  * Reads and parses the package.json file.
@@ -144,6 +166,9 @@ async function createGitTagAndRelease(version) {
   } else {
     console.log(stdout);
   }
+
+  // Open the release edit page in the browser
+  await openReleaseEditPage(tagName);
 }
 
 // Main execution
