@@ -1,0 +1,5 @@
+# Example custom style configuration for Vale
+extends: capitalization
+message: "'%s' should follow capitalization rules."
+level: warning
+scope: heading
