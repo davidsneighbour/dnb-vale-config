@@ -1,7 +1,7 @@
 {
   "name": "dnb-vale-config",
   "description": "This repository contains a custom Vale configuration, styles, and dictionary files for writing and linting text.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "MIT",
   "author": "Patrick Kollitsch <patrick@davids-neighbour.com>",
   "keywords": [],
