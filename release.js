@@ -9,7 +9,7 @@ const execPromise = promisify(exec);
 const DIST_DIR = 'dist';
 const SRC_DIR = 'src';
 let OUTPUT_ZIP = ''; // Will be set dynamically based on the version
-const SECOND_ZIP = path.join(DIST_DIR, 'config.zip'); // Static name for the second zip
+const SECOND_ZIP = path.join(DIST_DIR, 'DNB.zip'); // Static name for the second zip
 const README_PATH = path.resolve('README.md');
 const VALE_INI_PATH = path.join(SRC_DIR, '.vale.ini');
 
