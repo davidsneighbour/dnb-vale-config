@@ -17,7 +17,7 @@ The DNB Vale Configuration package is hosted as an externally downloadable `.zip
 ```ini
 MinAlertLevel = suggestion
 
-Packages = https://github.com/davidsneighbour/dnb-vale-config/releases/download/v0.0.6/config.zip
+Packages = https://github.com/davidsneighbour/dnb-vale-config/releases/download/v0.0.7/config.zip
 ```
 
 ### Steps to Use
