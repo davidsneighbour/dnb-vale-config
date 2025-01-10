@@ -1,12 +1,7 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
-	"extensions": {
-		"recommendations": [
-			"slevesque.vscode-zipexplorer"
-		]
-	}
+  "folders": [
+    {
+      "path": "."
+    }
+  ]
 }
