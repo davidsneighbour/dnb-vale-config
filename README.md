@@ -1,12 +1,5 @@
-# DNB Vale Configuration
-
+<!-- markdownlint-disable MD041 -->
 This repository contains a custom Vale configuration, styles, and dictionary files for writing and linting text.
-
-## Structure
-
-- `src/.vale.ini`: Main configuration file for Vale.
-- `src/Styles/`: Custom styles and rules.
-- `src/Dictionary/`: Custom dictionary for spell checking.
 
 ## Usage
 
@@ -15,15 +8,9 @@ The DNB Vale Configuration package is hosted as an externally downloadable `.zip
 ### Example Configuration
 
 ```ini
-MinAlertLevel = suggestion
-
-Packages = https://github.com/davidsneighbour/dnb-vale-config/releases/download/v0.0.17/config.zip
+MinAlertLevel = suggestion # suggestion, warning, error
+Packages = https://github.com/davidsneighbour/dnb-vale-config/releases/download/v0.0.16/DNB.zip
 ```
-
-### Steps to Use
-
-1. Add the latest release URL of the DNB Vale Configuration to your `.vale.ini` under the `Packages` key.
-2. Run Vale as usual. It will automatically download and use the package during linting.
 
 ### Understanding Vale Configuration Merging
 
@@ -33,49 +20,13 @@ For example, consider the following configuration:
 
 ```ini
 Packages = Microsoft,
-https://github.com/davidsneighbour/dnb-vale-config/releases/download/v0.0.0/config.zip
+https://github.com/davidsneighbour/dnb-vale-config/releases/download/v0.0.16/DNB.zip
 ```
 
 In this setup:
 
 1. **`Microsoft`**: Provides a base set of configurations and rules.
 2. **`dnb-vale-config`**: Our custom package, listed last, **overrides settings** from `Microsoft`.
-
-#### How Merging Works
-
-- **Override, Not Replace**: If multiple packages define the same setting, the one listed last (furthest to the right) takes precedence.
-- **Merged Configuration**: Settings and rules that do not conflict are combined from all specified packages.
-
-#### Example Scenario
-
-Suppose the `Microsoft` package defines:
-
-```ini
-[*.md]
-BasedOnStyles = Microsoft
-```
-
-Our `dnb-vale-config` package adds:
-
-```ini
-[*.md]
-BasedOnStyles = DNB
-```
-
-The resulting configuration for Markdown files (`*.md`) after merging:
-
-```ini
-[*.md]
-BasedOnStyles = DNB
-```
-
-Here, `BasedOnStyles = DNB` from `dnb-vale-config` overrides the earlier settings. However, any rules or configurations not defined in `dnb-vale-config` will still come from `Microsoft`.
-
-#### Why This Matters
-
-By placing your custom package last in the `Packages` key, you ensure that your rules and configurations take precedence while still benefiting from the base configurations of other packages.
-
-This approach provides flexibility and control, allowing you to **build upon existing packages** without completely replacing them.
 
 ## Release Process
 
@@ -95,7 +46,7 @@ This repository follows **semantic versioning** (`MAJOR.MINOR.PATCH`) for all re
 2. **Version Updates**:
    - The script automatically updates:
      - The `version` field in `package.json`.
-     - The version number in `src/.vale.ini` (if present).
+     - The version number in the source files (if present).
      - The download link in the `README.md` file to point to the latest release.
 
 3. **Check for Uncommitted Changes**:
