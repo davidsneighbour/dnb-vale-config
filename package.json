@@ -5,7 +5,9 @@
   "license": "MIT",
   "author": "Patrick Kollitsch <patrick@davids-neighbour.com>",
   "keywords": [],
-  "dependencies": {},
+  "dependencies": {
+    "@davidsneighbour/remark-config": "^2024.4.12"
+  },
   "devDependencies": {
     "archiver": "^7.0.1",
     "vitest": "^2.1.8"
