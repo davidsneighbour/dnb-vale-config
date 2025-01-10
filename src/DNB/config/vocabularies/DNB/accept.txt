@@ -1,3 +1,5 @@
+# Version: 0.0.8
+
 [Bb]oolean
 [Cc]acheability
 [Ff]rontmatter
