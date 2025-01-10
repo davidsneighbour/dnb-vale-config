@@ -121,16 +121,19 @@ async function bumpVersion(bumpType) {
   updateVersionInFile(REJECT_PATH, newVersion);
 
   // Update README.md to point to config.zip with the correct version
-  const newLink = `https://github.com/davidsneighbour/dnb-vale-config/releases/download/v${newVersion}/config.zip`;
-
   if (fs.existsSync(README_PATH)) {
     const readmeContent = fs.readFileSync(README_PATH, 'utf-8');
-    const updatedReadmeContent = readmeContent.replace(
-      /https:\/\/github\.com\/davidsneighbour\/dnb-vale-config\/releases\/download\/v\d+\.\d+\.\d+(-test)?\/config\.zip/,
-      newLink
-    );
+    const updatedReadmeContent = readmeContent
+      .replace(
+        /https:\/\/github\.com\/davidsneighbour\/dnb-vale-config\/releases\/download\/v\d+\.\d+\.\d+(-test)?\/DNB\.zip/,
+        `https://github.com/davidsneighbour/dnb-vale-config/releases/download/v${newVersion}/DNB.zip`
+      )
+      .replace(
+        /Packages = Microsoft,?\s*https:\/\/github\.com\/davidsneighbour\/dnb-vale-config\/releases\/download\/v\d+\.\d+\.\d+(-test)?\/DNB\.zip/,
+        `Packages = Microsoft,\nhttps://github.com/davidsneighbour/dnb-vale-config/releases/download/v${newVersion}/DNB.zip`
+      );
     fs.writeFileSync(README_PATH, updatedReadmeContent);
-    log(`Updated README.md with the new download link: ${newLink}`);
+    log(`Updated README.md with the new download links.`);
   } else {
     log(`File not found: ${README_PATH}`);
   }
