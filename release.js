@@ -11,7 +11,25 @@ const SRC_DIR = 'src';
 let OUTPUT_ZIP = ''; // Will be set dynamically based on the version
 const SECOND_ZIP = path.join(DIST_DIR, 'DNB.zip'); // Static name for the second zip
 const README_PATH = path.resolve('README.md');
-const VALE_INI_PATH = path.join(SRC_DIR, '.vale.ini');
+const VALE_INI_PATH = path.join(SRC_DIR, 'DNB/.vale.ini');
+const ACCEPT_PATH = path.join(SRC_DIR, 'DNB/styles/config/vocabularies/DNB/accept.txt');
+const REJECT_PATH = path.join(SRC_DIR, 'DNB/styles/config/vocabularies/DNB/reject.txt');
+const LOG_DIR = path.resolve(process.env.HOME || '~', '.logs');
+const LOG_FILE = path.join(LOG_DIR, `vale-release-${new Date().toISOString().split('T')[0]}.log`);
+
+/**
+ * Logs messages to ~/.logs/vale-release-YYYY-MM-DD.log
+ * @param {string} message Message to log.
+ */
+function log(message) {
+  if (!fs.existsSync(LOG_DIR)) {
+    fs.mkdirSync(LOG_DIR, { recursive: true });
+  }
+  const timestamp = new Date().toISOString();
+  const logMessage = `[${timestamp}] ${message}\n`;
+  fs.appendFileSync(LOG_FILE, logMessage);
+  console.log(message); // Also log to console
+}
 
 /**
  * Opens a browser window for the release edit page.
@@ -19,7 +37,7 @@ const VALE_INI_PATH = path.join(SRC_DIR, '.vale.ini');
  */
 async function openReleaseEditPage(tagName) {
   const releaseEditUrl = `https://github.com/davidsneighbour/dnb-vale-config/releases/edit/${tagName}`;
-  console.log(`Opening browser to edit the release: ${releaseEditUrl}`);
+  log(`Opening browser to edit the release: ${releaseEditUrl}`);
   const platform = process.platform;
 
   try {
@@ -31,7 +49,23 @@ async function openReleaseEditPage(tagName) {
       execSync(`xdg-open ${releaseEditUrl}`);
     }
   } catch (error) {
-    console.error('Failed to open browser for release edit page:', error.message);
+    log(`Failed to open browser for release edit page: ${error.message}`);
+  }
+}
+
+/**
+ * Updates version in specified files.
+ * @param {string} filePath Path to the file to update.
+ * @param {string} newVersion The new version string.
+ */
+function updateVersionInFile(filePath, newVersion) {
+  if (fs.existsSync(filePath)) {
+    const content = fs.readFileSync(filePath, 'utf-8');
+    const updatedContent = content.replace(/#\s*Version:\s*\d+\.\d+\.\d+(-test)?/, `# Version: ${newVersion}`);
+    fs.writeFileSync(filePath, updatedContent);
+    log(`Updated version in ${filePath}`);
+  } else {
+    log(`File not found: ${filePath}`);
   }
 }
 
@@ -45,11 +79,11 @@ function getPackageJson() {
 }
 
 /**
- * Updates the version in package.json, src/.vale.ini, and README.md.
+ * Updates the version in package.json, src/.vale.ini, and other relevant files.
  * @param {string} bumpType Version bump type or test version (e.g., "patch" or "1.2.3-test").
  */
 async function bumpVersion(bumpType) {
-  console.log(`Bumping version with: ${bumpType}`);
+  log(`Bumping version with: ${bumpType}`);
 
   const packagePath = path.resolve('package.json');
   const packageJson = getPackageJson();
@@ -79,20 +113,12 @@ async function bumpVersion(bumpType) {
   // Update package.json
   packageJson.version = newVersion;
   fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2));
-  console.log(`Updated package.json version to ${newVersion}`);
+  log(`Updated package.json version to ${newVersion}`);
 
-  // Update src/.vale.ini
-  if (fs.existsSync(VALE_INI_PATH)) {
-    const iniContent = fs.readFileSync(VALE_INI_PATH, 'utf-8');
-    const updatedIniContent = iniContent.replace(
-      /#\s*Version:\s*\d+\.\d+\.\d+(-test)?/,
-      `# Version: ${newVersion}`
-    );
-    fs.writeFileSync(VALE_INI_PATH, updatedIniContent);
-    console.log(`Updated version in ${VALE_INI_PATH}`);
-  } else {
-    console.error(`File not found: ${VALE_INI_PATH}`);
-  }
+  // Update relevant files
+  updateVersionInFile(VALE_INI_PATH, newVersion);
+  updateVersionInFile(ACCEPT_PATH, newVersion);
+  updateVersionInFile(REJECT_PATH, newVersion);
 
   // Update README.md to point to config.zip with the correct version
   const newLink = `https://github.com/davidsneighbour/dnb-vale-config/releases/download/v${newVersion}/config.zip`;
@@ -104,9 +130,9 @@ async function bumpVersion(bumpType) {
       newLink
     );
     fs.writeFileSync(README_PATH, updatedReadmeContent);
-    console.log(`Updated README.md with the new download link: ${newLink}`);
+    log(`Updated README.md with the new download link: ${newLink}`);
   } else {
-    console.error(`File not found: ${README_PATH}`);
+    log(`File not found: ${README_PATH}`);
   }
 
   // Set the dynamic output zip file name
@@ -123,7 +149,7 @@ async function ensureCleanGitState() {
   if (stdout.trim()) {
     throw new Error('Repository has uncommitted changes. Commit or stash them before releasing.');
   }
-  console.log('Git state is clean.');
+  log('Git state is clean.');
 }
 
 /**
@@ -132,7 +158,7 @@ async function ensureCleanGitState() {
  * @param {string} description Description of the zip file being created (for logging).
  */
 async function createZip(zipPath, description) {
-  console.log(`Creating ${description} zip file: ${zipPath}`);
+  log(`Creating ${description} zip file: ${zipPath}`);
   await fs.promises.mkdir(DIST_DIR, { recursive: true });
 
   const output = fs.createWriteStream(zipPath);
@@ -144,7 +170,7 @@ async function createZip(zipPath, description) {
   archive.directory(SRC_DIR, false);
 
   await archive.finalize();
-  console.log(`Zip file created at ${zipPath}`);
+  log(`Zip file created at ${zipPath}`);
 }
 
 /**
@@ -153,18 +179,18 @@ async function createZip(zipPath, description) {
  */
 async function createGitTagAndRelease(version) {
   const tagName = `v${version}`;
-  console.log(`Creating Git tag: ${tagName}`);
+  log(`Creating Git tag: ${tagName}`);
   await execPromise(`git add . && git commit -m "Release ${tagName}"`);
   await execPromise(`git tag ${tagName}`);
   await execPromise('git push && git push --tags');
 
-  console.log('Publishing release on GitHub...');
+  log('Publishing release on GitHub...');
   const command = `gh release create ${tagName} ${OUTPUT_ZIP} ${SECOND_ZIP} --title "Release ${tagName}" --notes "Version ${tagName} release."`;
   const { stdout, stderr } = await execPromise(command);
   if (stderr) {
-    console.error(stderr);
+    log(stderr);
   } else {
-    console.log(stdout);
+    log(stdout);
   }
 
   // Open the release edit page in the browser
@@ -195,7 +221,7 @@ async function createGitTagAndRelease(version) {
       await createGitTagAndRelease(newVersion);
     }
   } catch (error) {
-    console.error('An error occurred:', error.message);
+    log(`An error occurred: ${error.message}`);
     process.exit(1);
   }
 })();
