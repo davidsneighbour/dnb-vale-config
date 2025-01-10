@@ -9,7 +9,7 @@ The DNB Vale Configuration package is hosted as an externally downloadable `.zip
 
 ```ini
 MinAlertLevel = suggestion # suggestion, warning, error
-Packages = https://github.com/davidsneighbour/dnb-vale-config/releases/download/v0.1.1/DNB.zip
+Packages = https://github.com/davidsneighbour/dnb-vale-config/releases/latest/download/DNB.zip
 ```
 
 ### Understanding Vale Configuration Merging
@@ -20,7 +20,7 @@ For example, consider the following configuration:
 
 ```ini
 Packages = Microsoft,
-https://github.com/davidsneighbour/dnb-vale-config/releases/download/v0.1.1/DNB.zip
+https://github.com/davidsneighbour/dnb-vale-config/releases/latest/download/DNB.zip
 ```
 
 In this setup:
