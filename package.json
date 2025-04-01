@@ -6,7 +6,7 @@
   "author": "Patrick Kollitsch <patrick@davids-neighbour.com>",
   "keywords": [],
   "dependencies": {
-    "@davidsneighbour/remark-config": "^2025.0.2"
+    "@davidsneighbour/remark-config": "^2025.1.1"
   },
   "devDependencies": {
     "archiver": "^7.0.1",
