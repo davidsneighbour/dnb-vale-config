@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "archiver": "^7.0.1",
-    "vitest": "^3.1.1"
+    "vitest": "^3.1.2"
   },
   "scripts": {
     "preRelease": "node release 1.2.3-test",
