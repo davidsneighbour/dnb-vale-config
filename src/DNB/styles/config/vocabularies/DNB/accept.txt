@@ -31,3 +31,5 @@ VSCode
 WSL
 XFCE
 YouTube
+GoHugo
+Ananke
