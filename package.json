@@ -5,12 +5,9 @@
   "license": "MIT",
   "author": "Patrick Kollitsch <patrick@davids-neighbour.com>",
   "keywords": [],
-  "dependencies": {
-    "@davidsneighbour/remark-config": "^2025.1.1"
-  },
   "devDependencies": {
-    "archiver": "^7.0.1",
-    "vitest": "^3.1.1"
+    "archiver": "7.0.1",
+    "vitest": "3.2.2"
   },
   "scripts": {
     "preRelease": "node release 1.2.3-test",
