@@ -33,3 +33,6 @@ XFCE
 YouTube
 GoHugo
 Ananke
+Astro
+dev
+CLI
