@@ -18,7 +18,7 @@
     "vale-style"
   ],
   "devDependencies": {
-    "@biomejs/biome": "2.5.12",
+    "@biomejs/biome": "2.5.14",
     "@dnbhq/biome-config": "0.2.7",
     "@dnbhq/markdownlint-config": "0.2.11",
     "@dnbhq/release-config": "1.1.3",
