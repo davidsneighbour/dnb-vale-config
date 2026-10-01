@@ -19,7 +19,7 @@
   ],
   "devDependencies": {
     "@biomejs/biome": "2.5.12",
-    "@dnbhq/biome-config": "0.2.7",
+    "@dnbhq/biome-config": "0.3.1",
     "@dnbhq/markdownlint-config": "0.2.11",
     "@dnbhq/release-config": "1.1.3",
     "@dnbhq/tsconfig": "0.1.6",
